@@ -167,6 +167,8 @@ Se implementan validaciones usando Jakarta Validation:
 
 ## **Testing**
 
-````
-mvn test
-````
+- Para ejecutar las pruebas se deberá usar el comando: `mvn test`
+- Para ejecutar las pruebas con cobertura se deberá usar el comando: `mvn clean test`
+
+<img width="559" height="647" alt="image" src="https://github.com/user-attachments/assets/3352344f-cc99-4142-9cda-8d73f8e93635" />
+
