@@ -55,6 +55,10 @@ public class PrestamoServiceImpl implements PrestamoService {
         Prestamo prestamo = prestamoRepository.findById(prestamoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Préstamo no encontrado"));
 
+        if (prestamo.getEstado() == EstadoPrestamo.DEVUELTO) {
+            throw new BusinessException("El libro ya fue devuelto");
+        }
+
         prestamo.setFechaDevolucion(LocalDate.now());
         prestamo.setEstado(EstadoPrestamo.DEVUELTO);
 
