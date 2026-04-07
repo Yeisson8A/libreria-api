@@ -12,6 +12,7 @@ API REST desarrollada con Spring Boot para la gestión de una librería. Permite
 - Lombok
 - Jakarta Validation
 - OpenAPI / Swagger
+- Docker
 
 ## **Arquitectura**
 
@@ -24,6 +25,18 @@ controller → service → repository → database
                 ↓
                dto
 ```
+
+## **Crear la red Docker (una sola vez)**
+`docker network create libreria-network`
+
+## **Conectar el contenedor PostgreSQL a la red**
+`docker network connect libreria-network postgresql`
+
+## **Construir la imagen**
+`docker-compose build`
+
+## **Levantar todo**
+`docker-compose up -d`
 
 ### **Estructura de paquetes**
 
@@ -76,6 +89,8 @@ Configurada en `application.properties`:
 - **spring.datasource.password**: Correspondiente a la contraseña asociada al usuario para la conexión al servidor de base de datos
 - **spring.jpa.hibernate.ddl-auto**: Utilizado para aplicar los respectivos cambios en las tablas de base de datos, tras modificación de las entidades
 - **spring.jpa.show-sql**: Utilizado para mostrar las sentencias SQL correspondiente a cada operación que realiza la API
+
+**Nota**: Tener en cuenta que el host del servidor corresponde al nombre del contenedor donde esta la base de datos, por ejemplo: **postgresql**
 
 ## **Ejecución**
 

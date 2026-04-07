@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  libreria-api:
+    build: .
+    container_name: libreria-api
+    ports:
+      - "8080:8080"
+    networks:
+      - libreria-network
+
+networks:
+  libreria-network:
+    external: true
