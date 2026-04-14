@@ -65,12 +65,14 @@ com.ochoa.yeisson.libreria
 - Obtener libro por ID
 - Actualizar libro
 - Eliminar libro
+- Buscar
 
 ### **Usuarios**
 
 - Crear usuario
 - Listar usuarios
 - Obtener usuario por ID
+- Buscar
 
 ### **Préstamos**
 
@@ -104,8 +106,8 @@ mvn spring-boot:run
 Swagger disponible en: `http://localhost:8080/swagger-ui/index.html`
 
 <img width="1351" height="219" alt="image" src="https://github.com/user-attachments/assets/76c2633a-1d31-46ac-8f7e-a14edb02178a" />
-<img width="1351" height="340" alt="image" src="https://github.com/user-attachments/assets/33bfd86a-d330-477b-a8e7-03b1058a2f05" />
-<img width="1350" height="233" alt="image" src="https://github.com/user-attachments/assets/e290d9e8-5068-460a-8546-3340eae0af09" />
+<img width="1345" height="390" alt="image" src="https://github.com/user-attachments/assets/6ffb72e8-b6ac-4071-9ee0-b017962df1e4" />
+<img width="1347" height="289" alt="image" src="https://github.com/user-attachments/assets/5d402d3b-6833-4f38-8fd4-9f1cc9017956" />
 
 ## **Ejemplos de Requests**
 
