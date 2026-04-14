@@ -11,6 +11,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
+
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -75,5 +77,64 @@ public class UsuarioControllerTest {
         mockMvc.perform(get("/api/usuarios/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").value(1));
+    }
+
+    @Test
+    void deberiaRetornarUsuariosConQuery() throws Exception {
+
+        List<UsuarioDTO> mockUsuarios = List.of(
+                UsuarioDTO.builder().id(1L).nombre("Juan").build(),
+                UsuarioDTO.builder().id(2L).nombre("Ana").build()
+        );
+
+        when(usuarioService.buscar("juan")).thenReturn(mockUsuarios);
+
+        mockMvc.perform(get("/api/usuarios/buscar")
+                        .param("query", "juan")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("Lista de usuarios"))
+                .andExpect(jsonPath("$.data.length()").value(2))
+                .andExpect(jsonPath("$.data[0].nombre").value("Juan"));
+    }
+
+    @Test
+    void deberiaRetornarUsuariosSinQuery() throws Exception {
+
+        List<UsuarioDTO> mockUsuarios = List.of(
+                UsuarioDTO.builder().id(1L).nombre("Carlos").build()
+        );
+
+        when(usuarioService.buscar(null)).thenReturn(mockUsuarios);
+
+        mockMvc.perform(get("/api/usuarios/buscar")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.length()").value(1));
+    }
+
+    @Test
+    void deberiaRetornarListaVacia() throws Exception {
+
+        when(usuarioService.buscar("xyz")).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/usuarios/buscar")
+                        .param("query", "xyz"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.length()").value(0));
+    }
+
+    @Test
+    void deberiaLlamarAlServiceConQuery() throws Exception {
+
+        when(usuarioService.buscar("test")).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/usuarios/buscar")
+                .param("query", "test"));
+
+        verify(usuarioService).buscar("test");
     }
 }

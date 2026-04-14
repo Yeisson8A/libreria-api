@@ -9,6 +9,7 @@ import com.ochoa.yeisson.libreria_api.model.Usuario;
 import com.ochoa.yeisson.libreria_api.repository.UsuarioRepository;
 import com.ochoa.yeisson.libreria_api.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -43,5 +44,14 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
         return usuarioMapper.toDTO(usuario);
+    }
+
+    @Override
+    public List<UsuarioDTO> buscar(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return usuarioMapper.toDTOList(usuarioRepository.findAll(PageRequest.of(0, 10)).getContent());
+        }
+
+        return usuarioMapper.toDTOList(usuarioRepository.buscarPorNombre(query.trim(), PageRequest.of(0, 10)));
     }
 }

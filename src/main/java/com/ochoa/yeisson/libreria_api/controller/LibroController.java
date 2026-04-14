@@ -68,4 +68,12 @@ public class LibroController {
                 ResponseBuilder.success(null, "Libro eliminado correctamente")
         );
     }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<ApiResponse<List<LibroDTO>>> buscar(@RequestParam(required = false) String query) {
+        return ResponseEntity.ok(ResponseBuilder.success(
+                libroService.buscar(query),
+                "Lista de libros"
+        ));
+    }
 }

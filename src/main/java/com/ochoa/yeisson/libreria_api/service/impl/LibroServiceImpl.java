@@ -9,6 +9,7 @@ import com.ochoa.yeisson.libreria_api.model.Libro;
 import com.ochoa.yeisson.libreria_api.repository.LibroRepository;
 import com.ochoa.yeisson.libreria_api.service.LibroService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -64,5 +65,14 @@ public class LibroServiceImpl implements LibroService {
     @Override
     public void eliminarLibro(Long id) {
         libroRepository.deleteById(id);
+    }
+
+    @Override
+    public List<LibroDTO> buscar(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return libroMapper.toDTOList(libroRepository.findAll(PageRequest.of(0, 10)).getContent());
+        }
+
+        return libroMapper.toDTOList(libroRepository.buscarPorTituloOIsbn(query.trim(), PageRequest.of(0, 10)));
     }
 }

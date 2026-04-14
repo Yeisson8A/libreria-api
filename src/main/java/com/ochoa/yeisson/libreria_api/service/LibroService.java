@@ -2,6 +2,7 @@ package com.ochoa.yeisson.libreria_api.service;
 
 import com.ochoa.yeisson.libreria_api.dto.CrearLibroRequest;
 import com.ochoa.yeisson.libreria_api.dto.LibroDTO;
+
 import java.util.List;
 
 public interface LibroService {
@@ -14,4 +15,6 @@ public interface LibroService {
     LibroDTO actualizarLibro(Long id, CrearLibroRequest request);
 
     void eliminarLibro(Long id);
+
+    List<LibroDTO> buscar(String query);
 }

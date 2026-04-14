@@ -13,6 +13,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+
 import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
@@ -106,5 +110,71 @@ public class UsuarioServiceTest {
         assertThrows(ResourceNotFoundException.class, () ->
                 usuarioService.obtenerPorId(1L)
         );
+    }
+
+    @Test
+    void deberiaUsarFindAllCuandoQueryEsNull() {
+
+        List<Usuario> usuarios = List.of(new Usuario());
+        Page<Usuario> page = new PageImpl<>(usuarios);
+
+        when(usuarioRepository.findAll(PageRequest.of(0, 10))).thenReturn(page);
+        when(usuarioMapper.toDTOList(usuarios)).thenReturn(List.of(new UsuarioDTO()));
+
+        List<UsuarioDTO> result = usuarioService.buscar(null);
+
+        assertNotNull(result);
+        verify(usuarioRepository).findAll(PageRequest.of(0, 10));
+        verify(usuarioMapper).toDTOList(usuarios);
+    }
+
+    @Test
+    void deberiaUsarFindAllCuandoQueryEsVacia() {
+
+        List<Usuario> usuarios = List.of(new Usuario());
+        Page<Usuario> page = new PageImpl<>(usuarios);
+
+        when(usuarioRepository.findAll(PageRequest.of(0, 10))).thenReturn(page);
+        when(usuarioMapper.toDTOList(usuarios)).thenReturn(List.of(new UsuarioDTO()));
+
+        List<UsuarioDTO> result = usuarioService.buscar("   ");
+
+        assertNotNull(result);
+        verify(usuarioRepository).findAll(PageRequest.of(0, 10));
+    }
+
+    @Test
+    void deberiaBuscarPorNombreCuandoQueryTieneValor() {
+
+        List<Usuario> usuarios = List.of(new Usuario());
+
+        when(usuarioRepository.buscarPorNombre(eq("juan"), any(PageRequest.class)))
+                .thenReturn(usuarios);
+
+        when(usuarioMapper.toDTOList(usuarios))
+                .thenReturn(List.of(new UsuarioDTO()));
+
+        List<UsuarioDTO> result = usuarioService.buscar("juan");
+
+        assertNotNull(result);
+
+        verify(usuarioRepository).buscarPorNombre(eq("juan"), any(PageRequest.class));
+        verify(usuarioMapper).toDTOList(usuarios);
+    }
+
+    @Test
+    void deberiaAplicarTrimALaQuery() {
+
+        List<Usuario> usuarios = List.of(new Usuario());
+
+        when(usuarioRepository.buscarPorNombre(eq("juan"), any(PageRequest.class)))
+                .thenReturn(usuarios);
+
+        when(usuarioMapper.toDTOList(usuarios))
+                .thenReturn(List.of(new UsuarioDTO()));
+
+        usuarioService.buscar("   juan   ");
+
+        verify(usuarioRepository).buscarPorNombre(eq("juan"), any(PageRequest.class));
     }
 }

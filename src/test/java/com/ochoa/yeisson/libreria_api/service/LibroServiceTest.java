@@ -13,6 +13,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+
 import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
@@ -145,5 +149,71 @@ public class LibroServiceTest {
         libroService.eliminarLibro(1L);
 
         verify(libroRepository).deleteById(1L);
+    }
+
+    @Test
+    void deberiaUsarFindAllCuandoQueryEsNull() {
+
+        List<Libro> libros = List.of(new Libro());
+        Page<Libro> page = new PageImpl<>(libros);
+
+        when(libroRepository.findAll(PageRequest.of(0, 10))).thenReturn(page);
+        when(libroMapper.toDTOList(libros)).thenReturn(List.of(new LibroDTO()));
+
+        List<LibroDTO> result = libroService.buscar(null);
+
+        assertNotNull(result);
+        verify(libroRepository).findAll(PageRequest.of(0, 10));
+        verify(libroMapper).toDTOList(libros);
+    }
+
+    @Test
+    void deberiaUsarFindAllCuandoQueryEsVacia() {
+
+        List<Libro> libros = List.of(new Libro());
+        Page<Libro> page = new PageImpl<>(libros);
+
+        when(libroRepository.findAll(PageRequest.of(0, 10))).thenReturn(page);
+        when(libroMapper.toDTOList(libros)).thenReturn(List.of(new LibroDTO()));
+
+        List<LibroDTO> result = libroService.buscar("   ");
+
+        assertNotNull(result);
+        verify(libroRepository).findAll(PageRequest.of(0, 10));
+    }
+
+    @Test
+    void deberiaBuscarPorTituloOIsbnCuandoQueryTieneValor() {
+
+        List<Libro> libros = List.of(new Libro());
+
+        when(libroRepository.buscarPorTituloOIsbn(eq("clean"), any(PageRequest.class)))
+                .thenReturn(libros);
+
+        when(libroMapper.toDTOList(libros))
+                .thenReturn(List.of(new LibroDTO()));
+
+        List<LibroDTO> result = libroService.buscar("clean");
+
+        assertNotNull(result);
+
+        verify(libroRepository).buscarPorTituloOIsbn(eq("clean"), any(PageRequest.class));
+        verify(libroMapper).toDTOList(libros);
+    }
+
+    @Test
+    void deberiaAplicarTrimALaQuery() {
+
+        List<Libro> libros = List.of(new Libro());
+
+        when(libroRepository.buscarPorTituloOIsbn(eq("clean"), any(PageRequest.class)))
+                .thenReturn(libros);
+
+        when(libroMapper.toDTOList(libros))
+                .thenReturn(List.of(new LibroDTO()));
+
+        libroService.buscar("  clean  ");
+
+        verify(libroRepository).buscarPorTituloOIsbn(eq("clean"), any(PageRequest.class));
     }
 }

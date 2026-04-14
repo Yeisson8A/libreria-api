@@ -50,4 +50,12 @@ public class UsuarioController {
                 )
         );
     }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<ApiResponse<List<UsuarioDTO>>> buscar(@RequestParam(required = false) String query) {
+        return ResponseEntity.ok(ResponseBuilder.success(
+                usuarioService.buscar(query),
+                "Lista de usuarios"
+        ));
+    }
 }

@@ -10,4 +10,6 @@ public interface UsuarioService {
     List<UsuarioDTO> listarUsuarios();
 
     UsuarioDTO obtenerPorId(Long id);
+
+    List<UsuarioDTO> buscar(String query);
 }

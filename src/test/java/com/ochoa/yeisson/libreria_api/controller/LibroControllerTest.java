@@ -194,4 +194,64 @@ public class LibroControllerTest {
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("Libro no encontrado"));
     }
+
+    @Test
+    void deberiaRetornarListaDeLibrosConQuery() throws Exception {
+
+        List<LibroDTO> mockLibros = List.of(
+                LibroDTO.builder().id(1L).titulo("Clean Code").build(),
+                LibroDTO.builder().id(2L).titulo("Clean Architecture").build()
+        );
+
+        when(libroService.buscar("clean")).thenReturn(mockLibros);
+
+        mockMvc.perform(get("/api/libros/buscar")
+                        .param("query", "clean")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("Lista de libros"))
+                .andExpect(jsonPath("$.data.length()").value(2))
+                .andExpect(jsonPath("$.data[0].titulo").value("Clean Code"));
+    }
+
+    @Test
+    void deberiaRetornarListaSinQuery() throws Exception {
+
+        List<LibroDTO> mockLibros = List.of(
+                LibroDTO.builder().id(1L).titulo("Clean Code").build()
+        );
+
+        when(libroService.buscar(null)).thenReturn(mockLibros);
+
+        mockMvc.perform(get("/api/libros/buscar")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.length()").value(1));
+    }
+
+    @Test
+    void deberiaRetornarListaVacia() throws Exception {
+
+        when(libroService.buscar("xyz")).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/libros/buscar")
+                        .param("query", "xyz"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.length()").value(0));
+    }
+
+    @Test
+    void deberiaLlamarAlServiceConQuery() throws Exception {
+
+        when(libroService.buscar("test")).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/libros/buscar")
+                .param("query", "test"));
+
+        // verificación
+        verify(libroService).buscar("test");
+    }
 }
